@@ -4,6 +4,7 @@ simply pass in a list of directories and go source files. Directories are proces
 Examples:
 
   gotags .
+
   gotags src ../go/src/pkg
 
 Tag generate contain some additional information. E.g. os.func.Exit would be one tag. Typically
