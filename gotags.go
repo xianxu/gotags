@@ -19,7 +19,7 @@ const (
 	header =
 `!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
 !_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
-!_TAG_PROGRAM_AUTHOR	Xian Xu	/email/
+!_TAG_PROGRAM_AUTHOR	Xian Xu	/@xianxu/
 !_TAG_PROGRAM_NAME	gotags	//
 !_TAG_PROGRAM_URL	http://github.com/xianxu/gotags	/official site/
 !_TAG_PROGRAM_VERSION	1.0	//
