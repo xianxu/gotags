@@ -16,7 +16,7 @@ import (
 
 const (
 	sep = "."
-	header =
+	ctagsHeader =
 `!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
 !_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
 !_TAG_PROGRAM_AUTHOR	Xian Xu	/@xianxu/
@@ -49,8 +49,9 @@ func main() {
 	// a channel of tags discovered.
 	tags := make(chan string, 10)
 	done := make(chan int)
+
 	// start simple consumer of tag stream
-	go consume(tags, done)
+	go consume4Ctags(tags, done)
 
 	// parse files and send tags to a channel
 	for _, p := range paths {
@@ -87,14 +88,14 @@ func printUsage() {
 	fmt.Println(helpText)
 }
 
-func consume(tags chan string, done chan int) {
+func consume4Ctags(tags chan string, done chan int) {
 	tf, err := os.Create("tags")
 	if err != nil {
 		fmt.Println("Can't open tags file for write.")
 		os.Exit(1)
 	}
 	writer := bufio.NewWriter(tf)
-	writer.WriteString(header)
+	writer.WriteString(ctagsHeader)
 	for tag := range tags {
 		writer.WriteString(tag + "\n")
 	}
