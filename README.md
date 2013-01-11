@@ -1,15 +1,11 @@
-This is a program to generate ctags for go. I'm using this with vim and ctrl-p.
-As a result, it's not particularly fully implemented, just the portion of stuff I need.
+This program generates ctags' tags file, for the intention to be used in vim and ctrl-p. To use,
+simply pass in a list of directories and go source files. Directories are processed recursively.
 
-The basic functionality provided is to construct a tags file under current running directory.
-Several src directory can be passed in, all in the relative form of current directory. All go
-source files in those directories will be recursively parsed and root level declarations
-extracted. Currently private declarations are extracted as well, for easier reading of source
-code.
+Examples:
 
-So to use, do:
-	gotags dir1 dir2 file1
+  gotags .
+  gotags src ../go/src/pkg
 
-For golang dev though, I think the golang plugin for IntelliJ's very good. With IdeaVim plugin,
-you don't really need this vim+ctags setting. My 2c.
-
+Tag generate contain some additional information. E.g. os.func.Exit would be one tag. Typically
+I use gotags src/ ../go/src/pkg to generate tags that contains both src files of my project and
+source files of sdk.
