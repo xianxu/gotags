@@ -3,9 +3,12 @@ simply pass in a list of directories and go source files. Directories are proces
 
 Examples:
 
+<pre>
+  <code>
   gotags .
-
   gotags src ../go/src/pkg
+  </code>
+</pre>
 
 Tag generate contain some additional information. E.g. os.func.Exit would be one tag. Typically
 I use gotags src/ ../go/src/pkg to generate tags that contains both src files of my project and
