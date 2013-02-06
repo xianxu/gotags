@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"flag"
 	"fmt"
 	"go/ast"
 	"go/parser"
@@ -11,21 +12,18 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-    "flag"
 )
 
 const (
-	sep = "."
-	ctagsHeader =
-`!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+	sep         = "."
+	ctagsHeader = `!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
 !_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
 !_TAG_PROGRAM_AUTHOR	Xian Xu	/@xianxu/
 !_TAG_PROGRAM_NAME	gotags	//
 !_TAG_PROGRAM_URL	http://github.com/xianxu/gotags	/official site/
 !_TAG_PROGRAM_VERSION	1.0	//
 `
-	helpText =
-`This program generates ctags' tags file, for the intention to be used in vim and ctrl-p. To use,
+	helpText = `This program generates ctags' tags file, for the intention to be used in vim and ctrl-p. To use,
 simply pass in a list of directories and go source files. Directories are processed recursively.
 
 Examples:
@@ -39,7 +37,7 @@ source files of sdk. `
 )
 
 func main() {
-    flag.Parse()
+	flag.Parse()
 	paths := flag.Args()
 	if flag.NArg() == 0 {
 		printUsage()
@@ -57,25 +55,25 @@ func main() {
 	for _, p := range paths {
 		if info, err := os.Lstat(p); err == nil {
 			if info.IsDir() {
-				filepath.Walk(p, func(path string, info os.FileInfo, err error)error {
-						if info.IsDir() {
-							fset := token.NewFileSet()
-							if trees, err := parser.ParseDir(fset, path, func(fi os.FileInfo) bool {
-									return strings.HasSuffix(fi.Name(), ".go")
-								}, 0); err == nil {
-								for i, v := range trees {
-									for _, file := range v.Files {
-										parseGo(i + sep, fset, file, tags)
-									}
+				filepath.Walk(p, func(path string, info os.FileInfo, err error) error {
+					if info.IsDir() {
+						fset := token.NewFileSet()
+						if trees, err := parser.ParseDir(fset, path, func(fi os.FileInfo) bool {
+							return strings.HasSuffix(fi.Name(), ".go")
+						}, 0); err == nil {
+							for i, v := range trees {
+								for _, file := range v.Files {
+									parseGo(i+sep, fset, file, tags)
 								}
 							}
 						}
-						return nil
-					})
+					}
+					return nil
+				})
 			} else {
 				fset := token.NewFileSet()
 				if tree, err := parser.ParseFile(fset, p, nil, 0); err == nil {
-					parseGo(tree.Name.Name + sep, fset, tree, tags)
+					parseGo(tree.Name.Name+sep, fset, tree, tags)
 				}
 			}
 		}
@@ -105,7 +103,7 @@ func consume4Ctags(tags chan string, done chan int) {
 	done <- 1
 }
 
-func isExported(s string)bool {
+func isExported(s string) bool {
 	return s[0] >= 'A' && s[0] <= 'Z'
 }
 
@@ -121,6 +119,7 @@ func nodeToString(fset *token.FileSet, n interface{}) string {
 	}
 	return buf.String()
 }
+
 // get a better function signature
 func funcToString(fset *token.FileSet, n interface{}) string {
 	if n == nil {
@@ -150,7 +149,7 @@ func fieldsToString(fset *token.FileSet, fl *ast.FieldList) string {
 	if len(r) <= 0 {
 		return r
 	}
-	return r[0:len(r)-1]
+	return r[0 : len(r)-1]
 }
 
 // convert an ast node to a string representing the location of that string in source file.
@@ -160,6 +159,7 @@ func nodeToLoc(fset *token.FileSet, n interface{}) string {
 	start := fset.Position(n.(ast.Node).Pos())
 	return fmt.Sprintf("%v\t%v;", start.Filename, start.Line)
 }
+
 // parse go source file and output ctags format.
 // ctags format is documented here: http://ctags.sourceforge.net/FORMAT
 // I'm using a variety that's supported by ctrl-p of vim. Notibly the tag itself may contain
@@ -203,4 +203,3 @@ func parseGo(prefix string, fset *token.FileSet, tree *ast.File, tags chan strin
 		}
 	}
 }
-
